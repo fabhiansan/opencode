@@ -1017,6 +1017,7 @@ export type EventSessionNextPrompted = {
   properties: {
     timestamp: number
     sessionID: string
+    id: string
     prompt: Prompt
   }
 }
@@ -1026,6 +1027,7 @@ export type EventSessionNextSynthetic = {
   properties: {
     timestamp: number
     sessionID: string
+    id: string
     text: string
   }
 }
@@ -1035,6 +1037,7 @@ export type EventSessionNextStepStarted = {
   properties: {
     timestamp: number
     sessionID: string
+    id: string
     model: {
       id: string
       providerID: string
@@ -1259,6 +1262,7 @@ export type EventSessionNextCompacted = {
   properties: {
     timestamp: number
     sessionID: string
+    id: string
     auto: boolean
     overflow?: boolean
   }
@@ -1390,6 +1394,7 @@ export type SyncEventSessionNextPrompted = {
   data: {
     timestamp: number
     sessionID: string
+    id: string
     prompt: Prompt
   }
 }
@@ -1403,6 +1408,7 @@ export type SyncEventSessionNextSynthetic = {
   data: {
     timestamp: number
     sessionID: string
+    id: string
     text: string
   }
 }
@@ -1416,6 +1422,7 @@ export type SyncEventSessionNextStepStarted = {
   data: {
     timestamp: number
     sessionID: string
+    id: string
     model: {
       id: string
       providerID: string
@@ -1679,6 +1686,7 @@ export type SyncEventSessionNextCompacted = {
   data: {
     timestamp: number
     sessionID: string
+    id: string
     auto: boolean
     overflow?: boolean
   }
@@ -2622,6 +2630,152 @@ export type ProviderAuthAuthorization = {
   method: "auto" | "code"
   instructions: string
 }
+
+export type SessionMessageUser = {
+  id: string
+  metadata?: {
+    [key: string]: unknown
+  }
+  time: {
+    created: number
+  }
+  text: string
+  files?: Array<PromptFileAttachment>
+  agents?: Array<PromptAgentAttachment>
+  type: "user"
+}
+
+export type SessionMessageSynthetic = {
+  id: string
+  metadata?: {
+    [key: string]: unknown
+  }
+  time: {
+    created: number
+  }
+  sessionID: string
+  text: string
+  type: "synthetic"
+}
+
+export type SessionMessageAssistantText = {
+  type: "text"
+  text: string
+}
+
+export type SessionMessageAssistantReasoning = {
+  type: "reasoning"
+  reasoningID: string
+  text: string
+}
+
+export type SessionMessageToolStatePending = {
+  status: "pending"
+  input: string
+}
+
+export type SessionMessageToolStateRunning = {
+  status: "running"
+  input: {
+    [key: string]: unknown
+  }
+  structured: {
+    [key: string]: unknown
+  }
+  content: Array<ToolTextContent | ToolFileContent>
+}
+
+export type SessionMessageToolStateCompleted = {
+  status: "completed"
+  input: {
+    [key: string]: unknown
+  }
+  attachments?: Array<PromptFileAttachment>
+  content: Array<ToolTextContent | ToolFileContent>
+  structured: {
+    [key: string]: unknown
+  }
+}
+
+export type SessionMessageToolStateError = {
+  status: "error"
+  input: {
+    [key: string]: unknown
+  }
+  content: Array<ToolTextContent | ToolFileContent>
+  structured: {
+    [key: string]: unknown
+  }
+  error: {
+    type: string
+    message: string
+  }
+}
+
+export type SessionMessageAssistantTool = {
+  type: "tool"
+  callID: string
+  name: string
+  state:
+    | SessionMessageToolStatePending
+    | SessionMessageToolStateRunning
+    | SessionMessageToolStateCompleted
+    | SessionMessageToolStateError
+  time: {
+    created: number
+    ran?: number
+    completed?: number
+    pruned?: number
+  }
+}
+
+export type SessionMessageAssistant = {
+  id: string
+  metadata?: {
+    [key: string]: unknown
+  }
+  time: {
+    created: number
+    completed?: number
+  }
+  type: "assistant"
+  content: Array<SessionMessageAssistantText | SessionMessageAssistantReasoning | SessionMessageAssistantTool>
+  snapshot?: {
+    start?: string
+    end?: string
+  }
+  cost?: number
+  tokens?: {
+    input: number
+    output: number
+    reasoning: number
+    cache: {
+      read: number
+      write: number
+    }
+  }
+  error?: string
+}
+
+export type SessionMessageCompaction = {
+  type: "compaction"
+  sessionID: string
+  auto: boolean
+  overflow?: boolean
+  id: string
+  metadata?: {
+    [key: string]: unknown
+  }
+  time: {
+    created: number
+  }
+}
+
+export type SessionMessage =
+  | SessionMessageUser
+  | SessionMessageSynthetic
+  | SessionMessageAssistant
+  | SessionMessageCompaction
 
 export type Symbol = {
   name: string
@@ -5286,6 +5440,40 @@ export type SyncHistoryListResponses = {
 }
 
 export type SyncHistoryListResponse = SyncHistoryListResponses[keyof SyncHistoryListResponses]
+
+export type V2SessionMessagesData = {
+  body?: never
+  path: {
+    sessionID: string
+  }
+  query?: {
+    directory?: string
+    workspace?: string
+  }
+  url: "/api/session/{sessionID}/message"
+}
+
+export type V2SessionMessagesErrors = {
+  /**
+   * Bad request
+   */
+  400: BadRequestError
+  /**
+   * Not found
+   */
+  404: NotFoundError
+}
+
+export type V2SessionMessagesError = V2SessionMessagesErrors[keyof V2SessionMessagesErrors]
+
+export type V2SessionMessagesResponses = {
+  /**
+   * List of v2 session messages
+   */
+  200: Array<SessionMessage>
+}
+
+export type V2SessionMessagesResponse = V2SessionMessagesResponses[keyof V2SessionMessagesResponses]
 
 export type FindTextData = {
   body?: never
