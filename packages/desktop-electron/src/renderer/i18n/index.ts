@@ -20,7 +20,6 @@ import { dict as appEn } from "../../../../app/src/i18n/en"
 import { dict as appZh } from "../../../../app/src/i18n/zh"
 import { dict as appZht } from "../../../../app/src/i18n/zht"
 import { dict as appKo } from "../../../../app/src/i18n/ko"
-import { dict as appDe } from "../../../../app/src/i18n/de"
 import { dict as appEs } from "../../../../app/src/i18n/es"
 import { dict as appFr } from "../../../../app/src/i18n/fr"
 import { dict as appDa } from "../../../../app/src/i18n/da"
@@ -141,7 +140,7 @@ function build(locale: Locale): Dictionary {
   if (locale === "en") return base
   if (locale === "zh") return { ...base, ...i18n.flatten(appZh), ...i18n.flatten(desktopZh) }
   if (locale === "zht") return { ...base, ...i18n.flatten(appZht), ...i18n.flatten(desktopZht) }
-  if (locale === "de") return { ...base, ...i18n.flatten(appDe), ...i18n.flatten(desktopDe) }
+  if (locale === "de") return { ...base, ...i18n.flatten(appEn), ...i18n.flatten(desktopDe) }
   if (locale === "es") return { ...base, ...i18n.flatten(appEs), ...i18n.flatten(desktopEs) }
   if (locale === "fr") return { ...base, ...i18n.flatten(appFr), ...i18n.flatten(desktopFr) }
   if (locale === "da") return { ...base, ...i18n.flatten(appDa), ...i18n.flatten(desktopDa) }
