@@ -7,6 +7,10 @@
   "packageManager": "bun@1.3.13",
   "scripts": {
     "dev": "bun run --cwd packages/opencode --conditions=browser src/index.ts",
+    "opencode": "bun run script/opencode.ts start",
+    "opencode:build": "bun run script/opencode.ts build",
+    "opencode:dev": "bun run script/opencode.ts dev",
+    "opencode:dev:pure": "bun run script/opencode.ts dev --pure",
     "dev:desktop": "bun --cwd packages/desktop-electron dev",
     "dev:web": "bun --cwd packages/app dev",
     "dev:console": "ulimit -n 10240 2>/dev/null; bun run --cwd packages/console/app dev",

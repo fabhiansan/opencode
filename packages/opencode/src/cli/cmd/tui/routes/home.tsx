@@ -1,5 +1,5 @@
 import { Prompt, type PromptRef } from "@tui/component/prompt"
-import { createEffect, createSignal } from "solid-js"
+import { createEffect, createSignal, Show } from "solid-js"
 import { Logo } from "../component/logo"
 import { useProject } from "../context/project"
 import { useSync } from "../context/sync"
@@ -9,6 +9,8 @@ import { useRouteData } from "@tui/context/route"
 import { usePromptRef } from "../context/prompt"
 import { useLocal } from "../context/local"
 import { TuiPluginRuntime } from "@/cli/cmd/tui/plugin/runtime"
+import { useTheme } from "../context/theme"
+import { InstallationLocal } from "@opencode-ai/core/installation/version"
 
 let once = false
 const placeholder = {
@@ -24,6 +26,7 @@ export function Home() {
   const [ref, setRef] = createSignal<PromptRef | undefined>()
   const args = useArgs()
   const local = useLocal()
+  const { theme } = useTheme()
   let sent = false
 
   const bind = (r: PromptRef | undefined) => {
@@ -62,6 +65,14 @@ export function Home() {
             <Logo />
           </TuiPluginRuntime.Slot>
         </box>
+        <Show when={InstallationLocal}>
+          <box justifyContent="center" width="100%" paddingTop={1} flexShrink={0}>
+            <box paddingLeft={2} paddingRight={2} backgroundColor={theme.backgroundElement}>
+              <text fg={theme.warning}>DEV MODE</text>
+              <text fg={theme.textMuted}> running from source</text>
+            </box>
+          </box>
+        </Show>
         <box height={1} minHeight={0} flexShrink={1} />
         <box width="100%" maxWidth={75} zIndex={1000} paddingTop={1} flexShrink={0}>
           <TuiPluginRuntime.Slot
